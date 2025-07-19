@@ -135,6 +135,7 @@ st.title("🧪 Tabel Periodik Unsur Kimia")
 # Buat grid 7x18
 grid = [["" for _ in range(18)] for _ in range(7)]
 for _, row in df.iterrows():
+    try:
     p = int(row["Periode"]) - 1
     g = int(row["Golongan"]) - 1
     
