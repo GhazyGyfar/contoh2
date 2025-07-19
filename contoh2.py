@@ -142,7 +142,7 @@ for _, row in df.iterrows():
         if 0 <= p < len(grid) and 0 <= g < len(grid[0]):
             grid[p][g] = row
     except Exception as e:
-    print(f"Kesalahan saat parsing indeks Periode/Golongan: {e}")
+        print(f"Kesalahan saat parsing indeks Periode/Golongan: {e}")
     continue
 unsur_diklik = None
 # Inisialisasi klik
