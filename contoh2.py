@@ -1,46 +1,89 @@
-# file: tabel_periodik.py
-
 import streamlit as st
 import pandas as pd
 
-# Data unsur kimia (hanya sebagian, bisa ditambah sesuai kebutuhan)
-unsur = [
-    {"Nomor": 1, "Simbol": "H",  "Nama": "Hidrogen",    "Massa Atom": 1.008, "Golongan": 1, "Periode": 1},
-    {"Nomor": 2, "Simbol": "He", "Nama": "Helium",      "Massa Atom": 4.0026, "Golongan": 18, "Periode": 1},
-    {"Nomor": 3, "Simbol": "Li", "Nama": "Litium",      "Massa Atom": 6.94, "Golongan": 1, "Periode": 2},
-    {"Nomor": 4, "Simbol": "Be", "Nama": "Berilium",    "Massa Atom": 9.0122, "Golongan": 2, "Periode": 2},
-    {"Nomor": 5, "Simbol": "B",  "Nama": "Boron",       "Massa Atom": 10.81, "Golongan": 13, "Periode": 2},
-    {"Nomor": 6, "Simbol": "C",  "Nama": "Karbon",      "Massa Atom": 12.01, "Golongan": 14, "Periode": 2},
-    {"Nomor": 7, "Simbol": "N",  "Nama": "Nitrogen",    "Massa Atom": 14.007, "Golongan": 15, "Periode": 2},
-    {"Nomor": 8, "Simbol": "O",  "Nama": "Oksigen",     "Massa Atom": 15.999, "Golongan": 16, "Periode": 2},
-    {"Nomor": 9, "Simbol": "F",  "Nama": "Fluorin",     "Massa Atom": 18.998, "Golongan": 17, "Periode": 2},
-    {"Nomor": 10, "Simbol": "Ne", "Nama": "Neon",       "Massa Atom": 20.180, "Golongan": 18, "Periode": 2},
-    # Tambahkan data lainnya sampai 118 unsur jika diperlukan
+# ==========================
+# 1. Load Data Unsur
+# ==========================
+# (Contoh sebagian, sisanya bisa di-extend)
+data = [
+    (1, "H", "Hidrogen", 1.008, 1, 1, "Nonlogam"),
+    (2, "He", "Helium", 4.0026, 18, 1, "Gas mulia"),
+    (3, "Li", "Litium", 6.94, 1, 2, "Logam alkali"),
+    (4, "Be", "Berilium", 9.0122, 2, 2, "Logam alkali tanah"),
+    (5, "B", "Boron", 10.81, 13, 2, "Metaloid"),
+    (6, "C", "Karbon", 12.011, 14, 2, "Nonlogam"),
+    (7, "N", "Nitrogen", 14.007, 15, 2, "Nonlogam"),
+    (8, "O", "Oksigen", 15.999, 16, 2, "Nonlogam"),
+    (9, "F", "Fluorin", 18.998, 17, 2, "Halogen"),
+    (10, "Ne", "Neon", 20.180, 18, 2, "Gas mulia"),
+    (11, "Na", "Natrium", 22.990, 1, 3, "Logam alkali"),
+    (12, "Mg", "Magnesium", 24.305, 2, 3, "Logam alkali tanah"),
+    (13, "Al", "Aluminium", 26.982, 13, 3, "Logam pasca-transisi"),
+    (14, "Si", "Silikon", 28.085, 14, 3, "Metaloid"),
+    (15, "P", "Fosfor", 30.974, 15, 3, "Nonlogam"),
+    (16, "S", "Sulfur", 32.06, 16, 3, "Nonlogam"),
+    (17, "Cl", "Klorin", 35.45, 17, 3, "Halogen"),
+    (18, "Ar", "Argon", 39.948, 18, 3, "Gas mulia"),
+    # Tambahkan hingga ke-118
 ]
 
-# Konversi ke DataFrame
-df_unsur = pd.DataFrame(unsur)
+df = pd.DataFrame(data, columns=["Nomor", "Simbol", "Nama", "Massa", "Golongan", "Periode", "Kategori"])
 
-# Judul
+# ==========================
+# 2. Warna berdasarkan jenis unsur
+# ==========================
+warna_kategori = {
+    "Logam alkali": "#FFB6C1",
+    "Logam alkali tanah": "#FFA07A",
+    "Logam transisi": "#FFD700",
+    "Logam pasca-transisi": "#DAA520",
+    "Metaloid": "#98FB98",
+    "Nonlogam": "#87CEEB",
+    "Halogen": "#7FFFD4",
+    "Gas mulia": "#DDA0DD",
+    "Lantanida": "#F5DEB3",
+    "Aktinida": "#E9967A"
+}
+
+# ==========================
+# 3. Tampilan Grid Tabel
+# ==========================
+st.set_page_config(layout="wide")
 st.title("🧪 Tabel Periodik Unsur Kimia")
 
-# Filter berdasarkan golongan dan periode
-golongan = st.sidebar.selectbox("Pilih Golongan", sorted(df_unsur["Golongan"].unique()))
-periode = st.sidebar.selectbox("Pilih Periode", sorted(df_unsur["Periode"].unique()))
+# Buat grid 7x18
+grid = [["" for _ in range(18)] for _ in range(7)]
 
-# Filter DataFrame
-df_filter = df_unsur[(df_unsur["Golongan"] == golongan) & (df_unsur["Periode"] == periode)]
+# Masukkan ke dalam grid
+for _, row in df.iterrows():
+    p, g = int(row["Periode"]) - 1, int(row["Golongan"]) - 1
+    grid[p][g] = row
 
-# Tampilkan Data
-st.subheader(f"Unsur dengan Golongan {golongan} dan Periode {periode}")
-st.dataframe(df_filter)
+# Inisialisasi klik
+unsur_diklik = None
 
-# Cari berdasarkan simbol
-cari_simbol = st.text_input("Cari Unsur berdasarkan Simbol", "")
-if cari_simbol:
-    hasil = df_unsur[df_unsur["Simbol"].str.upper() == cari_simbol.upper()]
-    if not hasil.empty:
-        st.success("Unsur ditemukan!")
-        st.table(hasil)
-    else:
-        st.error("Unsur tidak ditemukan.")
+# Tampilkan tabel
+for baris in grid:
+    kolom = st.columns(18)
+    for i in range(18):
+        if isinstance(baris[i], pd.Series):
+            u = baris[i]
+            warna = warna_kategori.get(u["Kategori"], "#CCCCCC")
+            with kolom[i]:
+                if st.button(f"{u['Simbol']}\n({int(u['Nomor'])})", key=f"{u['Nomor']}", help=u["Nama"]):
+                    unsur_diklik = u
+                st.markdown(f"<div style='height:5px; background-color:{warna}'></div>", unsafe_allow_html=True)
+        else:
+            kolom[i].empty()
+
+# ==========================
+# 4. Detail Unsur Klik
+# ==========================
+if unsur_diklik is not None:
+    st.markdown("---")
+    st.subheader(f"🧾 Detail Unsur: {unsur_diklik['Nama']} ({unsur_diklik['Simbol']})")
+    st.write(f"**Nomor Atom:** {unsur_diklik['Nomor']}")
+    st.write(f"**Massa Atom:** {unsur_diklik['Massa']} uma")
+    st.write(f"**Golongan:** {unsur_diklik['Golongan']}")
+    st.write(f"**Periode:** {unsur_diklik['Periode']}")
+    st.write(f"**Kategori:** {unsur_diklik['Kategori']}")
