@@ -137,7 +137,7 @@ grid = [["" for _ in range(19)] for _ in range(8)]
 for _, row in df.iterrows():
     p = int(row["Periode"]) - 1
     g = int(row["Golongan"]) - 1
-    if 0 <= p < len(grid) and 0 <= g < len(grid[0]):
+if 0 <= p < len(grid) and 0 <= g < len(grid[0]):
     grid[p][g] = row
 # Inisialisasi klik
 unsur_diklik = None
