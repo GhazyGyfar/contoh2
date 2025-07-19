@@ -135,7 +135,7 @@ st.title("🧪 Tabel Periodik Unsur Kimia")
 # Buat grid 7x18
 grid = [["" for _ in range(18)] for _ in range(7)]
 for _, row in df.iterrows():
-    p, g = int(row["Periode"])-1, int(row["Golongan"])-1
+    p, g = int(row["Periode"])-1,(row["Golongan"])-1
     grid[p][g] = row
 
 # Inisialisasi klik
